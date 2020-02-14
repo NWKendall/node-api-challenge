@@ -1,5 +1,6 @@
 const express = require("express");
 const projectData = require("./projectModel");
+const actionData = require("./actionModel");
 
 const router = express.Router();
 
@@ -16,7 +17,19 @@ router.get("/", (req, res) => {
     })
 })
 
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
 
+  projectData
+  .get(id)
+    .then(projects => {
+      res.status(200).json(projects)
+    })
+    .catch(err => {
+      console.log(`this is get all prjects error`, err)
+      res.status(500).json({ error: "SOMETHING WENT WRONG! WITH SERVER" })
+    })
+})
 
 
 router.post("/", (req, res) => {
@@ -87,12 +100,34 @@ router.put("/:id", (req, res) => {
   
 })
   
-function validateProjId(req, res, next){
-  // validates all routes that require an ID  
- console.log(req, res) 
- 
- next()  
-}
+
+
+
+router.post("/:id/actions", (req, res) => {
+  
+  const { id } = req.params
+  const action = { ...req.body, project_id: id };
+
+  console.log(`PROJECT`, action.body)
+
+
+  
+    actionData
+    .insert(action)
+    console.log(`before then`, action)
+    .then(newAction => {
+      !newAction ?
+        res.status(404).json({ error: "action with ID doesn't exist"})
+        : res.status(201).json(newAction)
+    })
+    .catch(err => {
+      console.log(`this is error from insert`, err)
+          res.status(500).json({ error: "There was an error while saving the action to the database"})
+    })  
+  })
+
+
+
 
 
 module.exports = router;
