@@ -1,17 +1,18 @@
 console.log(`this is npm run server server.js`)
 
 const express = require("express");
+const projectsRouter = require("./data/helpers/projects-router")
 
 const server = express();
-
 server.use(express.json());
 
 server.get("/", (req, res) => {
-  const test = [ { test: "IT's WORKING" }]
-  res.status(200).json(test)
+  res.send(`<h2>is it working????</h2>`);
 })
 
-const port = process.env.PORT || 5000
-server.listen(port, (req, res) => console.log(`Server on server.js listening on port:`, port))
+server.use("/projects", projectsRouter);
 
 
+
+
+module.exports = server;
