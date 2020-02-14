@@ -17,10 +17,16 @@ router.get("/", (req, res) => {
 })
 
 router.get("/:id", (req, res) => {
-  const { project_id } = req.params;
+  const { id } = req.params;
+  const action = { ...req.body, id: id}
+  console.log(`this is action`, action)
+
+
+  !id || isNaN(parseInt(id)) ?
+  res.status(400).json({ message: "invalid action id" }) :
 
   actionData
-  .get(project_id)
+  .get(action.id)
     .then(actions => {
       res.status(200).json(actions)
     })
