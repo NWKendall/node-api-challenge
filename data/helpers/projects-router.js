@@ -16,6 +16,9 @@ router.get("/", (req, res) => {
     })
 })
 
+
+
+
 router.post("/", (req, res) => {
   
   const { id } = req.params
@@ -55,23 +58,41 @@ router.delete("/:id", (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      res.status(500).json({ error: "The post could not be removed"  })
+      res.status(500).json({ error: "The project could not be removed"  })
     })
 })
 
+router.put("/:id", (req, res) => {
+ 
+  const { name, description } = req.body;
+  const { id } = req.params;
 
-// function validateProject(req, res, next) {
-//   // validates all POST requests for new user (not new user posts)  
-//   const { id } = req.params;
-//   const project = { ...req.body, user_id: id };  
-//   console.log(`validate project:`, project)
 
-//   !project ? 
-//     res.status(400).json({ message: "missing user data" }) 
-//     : !project.name || !project.description
-//     ? res.status(400).json({ message: "missing required fields" })
-//     : next();
+  console.log(req.body)
+  if(!name || !description) {
+    res.status(400).json({ errorMessage: "Please provide name and description for the project." })
+  } else {
+    projectData
+    .update(id, req.body)
+    .then(edit => {
+      !edit 
+        ? res.status(404).json({ message: "The project with the specified ID does not exist." })
+        : res.status(200).json(edit);
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({ error: "The project information could not be modified." })
+    })
+  }
   
-// }
+})
+  
+function validateProjId(req, res, next){
+  // validates all routes that require an ID  
+ console.log(req, res) 
+ 
+ next()  
+}
+
 
 module.exports = router;
