@@ -108,22 +108,17 @@ router.post("/:id/actions", (req, res) => {
   const { id } = req.params
   const action = { ...req.body, project_id: id };
 
-  console.log(`PROJECT`, action.body)
-
-
-  
-    actionData
-    .insert(action)
-    console.log(`before then`, action)
-    .then(newAction => {
-      !newAction ?
-        res.status(404).json({ error: "action with ID doesn't exist"})
-        : res.status(201).json(newAction)
-    })
-    .catch(err => {
-      console.log(`this is error from insert`, err)
-          res.status(500).json({ error: "There was an error while saving the action to the database"})
-    })  
+  !action.id === null || undefined ?
+    res.status(400).json({ message: "missing project data" }) 
+    : actionData
+      .insert(action)
+        .then(newAction => {
+          res.status(201).json(newAction)    
+        })
+        .catch(err => {
+        console.log(`this is error from insert`, err)
+            res.status(500).json({ error: "There was an error while saving the action to the database"})
+      })  
   })
 
 
