@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
     .catch(err => {
       console.log(err)
     })
-})
+});
 
 router.get("/:id", validateActionId, (req, res) => {
   const { id } = req.params
@@ -27,27 +27,8 @@ router.get("/:id", validateActionId, (req, res) => {
     .catch(err => {
       console.log(err)
     })
-})
+});
 
-router.post("/", validateAction, (req, res) => { 
-
-  const { id } = req.params;
-  const newAction = { ...req.body, project_id: id }
-
-  actionsData
-  .insert(newAction)
-  .then(newAct => {
-    if(!newAct){
-      res.status(400).json({ error: "something went wrong"})
-    } else {
-      res.status(201).json(newAct)  
-    }
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).json({ error: "something wrong with the server" `${err}`})
-  })
-})
 
 router.put("/:id", validateActionId, validateAction, (req, res) => {
   const { id } = req.params;

@@ -1,5 +1,7 @@
 const express = require("express");
 const projectsData = require("./projectModel");
+const actionsData = require("./actionModel");
+
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -74,6 +76,28 @@ router.delete("/:id", validateProjId, (req, res) => {
     })
 })
 
+
+
+
+router.post("/:id", validateAction, (req, res) => { 
+
+  const { id } = req.params;
+  const newAction = { ...req.body, project_id: id }
+  actionsData
+  .insert(newAction)
+  .then(newAct => {
+    if(!newAct){
+      res.status(400).json({ error: "something went wrong"})
+    } else {
+      res.status(201).json(newAct)  
+    }
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json({ error: "something wrong with the server" `${err}`})
+  })
+})
+
 // custom middleware
 function validateProjId(req, res, next){
   const { id } = req.params;
@@ -106,5 +130,18 @@ function validateProj(req, res, next){
   }
 }
 
+
+function validateAction(req, res, next){
+  const { description, notes } = req.body
+  console.log(`VALIDATE ACTION`, req.body)
+
+  if(!req.body){
+    res.status(404).json({ error: "No action with this exists" })
+  } else if (!description || !notes) {
+    res.status(404).json({ error: "please provide description AND notes fields" })
+  } else {
+    next();
+  }
+}
 module.exports = router;
 
