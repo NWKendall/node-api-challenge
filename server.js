@@ -14,4 +14,5 @@ server.get("/", (req, res) => {
 server.use("/projects", projectsRouter);
 server.use("/actions", actionsRouter);
 
-module.exports = server;
+const port = 4000
+server.listen(port, () => console.log(`Server in index.js listening on port:`, port))
