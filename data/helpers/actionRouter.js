@@ -1,15 +1,15 @@
 const express = require("express");
-const projectsData = require("./projectModel");
+const actionsData = require("./actionModel");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  projectsData
+  actionsData
   .get()
-    .then(projects => {
-      if(!projects) {
-        res.status(400).json({ error: "no projects data exists!"})
+    .then(actions => {
+      if(!actions) {
+        res.status(400).json({ error: "no actions data exists!"})
       } else {
-        res.status(200).json(projects)
+        res.status(200).json(actions)
       }      
     })
     .catch(err => {
@@ -19,10 +19,10 @@ router.get("/", (req, res) => {
 
 router.get("/:id", validateProjId, (req, res) => {
   const { id } = req.params
-  projectsData
+  actionsData
   .get(id)
-    .then(projects => {      
-      res.status(200).json(projects)         
+    .then(actions => {      
+      res.status(200).json(actions)         
     })
     .catch(err => {
       console.log(err)
@@ -30,7 +30,7 @@ router.get("/:id", validateProjId, (req, res) => {
 })
 
 router.post("/", validateProj, (req, res) => { 
-  projectsData
+  actionsData
   .insert(req.body)
   .then(newProj => {
     if(!newProj){
@@ -47,7 +47,7 @@ router.post("/", validateProj, (req, res) => {
 router.put("/:id", validateProjId, validateProj, (req, res) => {
   const { id } = req.params;
   
-  projectsData
+  actionsData
   .update(id, req.body)
   .then(newProj => {
     if(!newProj){
@@ -64,7 +64,7 @@ router.put("/:id", validateProjId, validateProj, (req, res) => {
 router.delete("/:id", validateProjId, (req, res) => {
 
   const { id } = req.params;
-  projectsData
+  actionsData
   .remove(id)
     .then(rem => {      
       res.status(200).json(rem)         
@@ -78,7 +78,7 @@ router.delete("/:id", validateProjId, (req, res) => {
 function validateProjId(req, res, next){
   const { id } = req.params;
 
-  projectsData
+  actionsData
   .get(id)
     .then(proj => {  
       if(!proj) {
