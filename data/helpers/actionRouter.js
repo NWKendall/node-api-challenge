@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
     })
 })
 
-router.get("/:id", validateProjId, (req, res) => {
+router.get("/:id", validateActionId, (req, res) => {
   const { id } = req.params
   actionsData
   .get(id)
@@ -29,22 +29,27 @@ router.get("/:id", validateProjId, (req, res) => {
     })
 })
 
-router.post("/", validateProj, (req, res) => { 
+router.post("/", validateAction, (req, res) => { 
+
+  const { id } = req.params;
+  const newAction = { ...req.body, project_id: id }
+
   actionsData
-  .insert(req.body)
-  .then(newProj => {
-    if(!newProj){
+  .insert(newAction)
+  .then(newAct => {
+    if(!newAct){
       res.status(400).json({ error: "something went wrong"})
     } else {
-      res.status(201).json(newProj)  
+      res.status(201).json(newAct)  
     }
   })
   .catch(err => {
+    console.log(err)
     res.status(500).json({ error: "something wrong with the server" `${err}`})
   })
 })
 
-router.put("/:id", validateProjId, validateProj, (req, res) => {
+router.put("/:id", validateActionId, validateAction, (req, res) => {
   const { id } = req.params;
   
   actionsData
@@ -57,11 +62,12 @@ router.put("/:id", validateProjId, validateProj, (req, res) => {
     }
   })
   .catch(err => {
-    res.status(500).json({ error: "something wrong with the server" `${err}`})
+    console.log(err)
+    res.status(500).json({ error: "something wrong with the server" })
   })
 })
 
-router.delete("/:id", validateProjId, (req, res) => {
+router.delete("/:id", validateActionId, (req, res) => {
 
   const { id } = req.params;
   actionsData
@@ -75,14 +81,14 @@ router.delete("/:id", validateProjId, (req, res) => {
 })
 
 // custom middleware
-function validateProjId(req, res, next){
+function validateActionId(req, res, next){
   const { id } = req.params;
 
   actionsData
   .get(id)
     .then(proj => {  
       if(!proj) {
-        res.status(404).json({ error: "No project with this ID exists" })
+        res.status(404).json({ error: "No action with this ID exists" })
       } else {
         next();      
       }      
@@ -92,15 +98,14 @@ function validateProjId(req, res, next){
     })
 }
 
-function validateProj(req, res, next){
-  const { id } = req.params;
-  const { name, description } = req.body
-  console.log(`VALIDATE PROJ`, req.body)
+function validateAction(req, res, next){
+  const { description, notes } = req.body
+  console.log(`VALIDATE ACTION`, req.body)
 
   if(!req.body){
-    res.status(404).json({ error: "No project with this exists" })
-  } else if (!name || !description) {
-    res.status(404).json({ error: "please provide name AND description fields" })
+    res.status(404).json({ error: "No action with this exists" })
+  } else if (!description || !notes) {
+    res.status(404).json({ error: "please provide description AND notes fields" })
   } else {
     next();
   }
